@@ -1,0 +1,269 @@
+import java.util.*;
+ import java.io.*;
+import java.util.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
+public class main 
+{
+static Scanner sc=new Scanner(System.in);
+public static void main(String[] args) {
+
+        Scanner sc=new Scanner(System.in);
+        String username;
+        String password;
+
+        int v=1;
+        System.out.print("Enter username: ");
+        username = sc.next();
+        System.out.print("Enter Password: ");
+
+        while(v<=5)
+        {
+                password = sc.next();
+                if(password.equalsIgnoreCase(username+"12345"))
+                {
+                        System.out.println("Login succesfull: ");
+                        break;
+                }
+                else
+                {
+                        System.out.println("wrong password");
+                        if(v!=5)
+                                System.out.println("Enter Correct Password : ");
+                        v=v+1;
+                }
+        }
+        if(v==6)
+                System.out.println("Out of attempts \nPlease Try again later");
+        
+                int choice=0;
+        System.out.println("This is an Expense Manager. We manage all your expenses.");
+        System.out.println("\n");
+        do{
+
+                System.out.println(" =======================================");
+                System.out.println("|       1. Add a Item                   |");
+                System.out.println("|       2. Display all Items            |");
+                System.out.println("|       3. Update a Item                |");
+                System.out.println("|       4. Delete a Item                |");
+                System.out.println("|       5. Calculate Total Expenses     |");
+                System.out.println("|       6. Exit the program             |");
+                System.out.println("|  *Type a number to make a selection*  |");
+                System.out.println(" =======================================");
+               
+                choice=sc.nextInt();
+                switch(choice) {
+
+                case 1:
+                        add();
+                        break;
+
+                case 2:
+                        display();
+                        break;
+
+
+                case 3:
+                        try {
+                                update();
+                        } catch(Exception e) {
+                                e.printStackTrace();
+
+                        }
+                        break;
+
+                case 4:
+                        try {
+
+                                delete();
+
+                        } catch(Exception e) {
+                                e.printStackTrace();
+
+                        }
+                        break;
+
+                case 5:
+                        calculate();
+                        break;
+
+                case 6:
+                        break;
+                default:
+                        System.out.println("INVALID OPTION");
+                        break;
+
+                }
+
+
+        }while(choice != 6);
+        System.out.println("Thank You for visiting.....!!");
+}
+
+
+
+public static void add()   {
+
+        Scanner input = new Scanner(System.in);
+        try{
+                BufferedWriter bw = new BufferedWriter( new FileWriter("expense.txt",true) );
+                String SerialNo,Item,Quantity,Price; int price;
+                System.out.print("Enter the SerialNo: ");
+                SerialNo = input.nextLine();
+                System.out.print("Enter the Item: ");
+                Item = input.nextLine();
+                System.out.print("Enter the Quantity: ");
+                Quantity = input.nextLine();
+                System.out.print("Enter the Price: ");
+                Price = input.nextLine();
+                price=Integer.parseInt(Price);
+
+                do {
+                        try {
+                                if(price < 0) {
+                                        throw new Exception("Expenses can't be negative"+Price);
+
+                                }
+                                else {
+                                        break;
+                                }
+                        }
+                        catch(InputMismatchException e) {
+                                System.out.println("Enter a correct amount");
+                                price=input.nextInt();
+                        }
+                        catch(Exception e) {
+                                System.out.println(e.getMessage());
+                        }
+                }while(price>0);
+                Price=String.valueOf(price);
+                bw.write(SerialNo+","+Item+","+Quantity+","+Price);
+                bw.flush();
+                bw.newLine();
+                bw.close();
+                input.close();
+        }
+        catch(IOException e)
+        {
+                e.printStackTrace();
+        }
+
+
+}
+
+public static void display(){
+        try {
+                BufferedReader br = new BufferedReader( new FileReader("expense.txt"));
+                String record;
+                System.out.println(" ------------------------------------------------------------- ");
+                System.out.println("|\tSerialNo\tItem\t\tQuantity\tPrice\t|");
+                System.out.println(" ------------------------------------------------------------- ");
+                while( ( record = br.readLine() ) != null ) {
+                        StringTokenizer st = new StringTokenizer(record,",");
+                        System.out.println("|\t"+st.nextToken()+"\t\t"+st.nextToken()+"\t\t"+st.nextToken()+"\t\t"+st.nextToken()+"\t|");
+                        System.out.println("|                                                           |" );
+                        System.out.println(" ------------------------------------------------------------- ");
+                        br.close();
+
+                }
+        } catch(Exception e) {
+                e.printStackTrace();
+        }
+}
+public static void update() throws IOException {
+        String newItem, newQuantity, newPrice, record, SerialNo,record2;
+        try {
+                File db = new File("expense.txt");
+                File tempDB = new File("expense.txt");
+
+                BufferedReader br = new BufferedReader( new FileReader(db) );
+                BufferedWriter bw = new BufferedWriter( new FileWriter(tempDB) );
+
+                Scanner input = new Scanner(System.in);
+
+                System.out.println("\t\t Update Item Record\n\n");
+                /****/
+                System.out.print("Enter the serial no: ");
+                SerialNo = input.nextLine();
+                System.out.println(" ------------------------------------------------------------- ");
+                System.out.println("|\tSerialNo\tItem\t\tQuantity\tPrice\t|");
+                System.out.println(" ------------------------------------------------------------- ");
+
+                while( ( record = br.readLine() ) != null ) {
+
+                        StringTokenizer st = new StringTokenizer(record,",");
+                        if( record.contains(SerialNo) ) {
+                                System.out.println("|\t"+st.nextToken()+"\t\t"+st.nextToken()+"\t\t"+st.nextToken()+"\t\t"+st.nextToken()+"\t|");
+                        }
+
+                }
+                System.out.println("|                                                           |" );
+                System.out.println(" ------------------------------------------------------------- ");
+
+                br.close();
+                /****/
+                System.out.print("Enter the new item: ");
+                newItem = input.nextLine();
+                System.out.print("Enter the new Quantity: ");
+                newQuantity = input.nextLine();
+                System.out.print("Enter the new Price: ");
+                newPrice = input.nextLine();
+
+                BufferedReader br2 = new BufferedReader( new FileReader(db) );
+
+                while( (record2 = br2.readLine() ) != null ) {
+                        if(record2.contains(SerialNo)) {
+                                bw.write(SerialNo+","+newItem+","+newQuantity+","+newPrice);
+                        } else {
+
+                                bw.write(record2);
+                        }
+                        bw.flush();
+                        bw.newLine();
+                }
+                input.close();
+                bw.close();
+                br2.close();
+                db.delete();
+                boolean success = tempDB.renameTo(db);
+                System.out.println(success);
+
+        } catch(Exception e) {
+                e.printStackTrace();
+
+        }
+}
+public static void delete()throws IOException {
+        Scanner input =  new Scanner(System.in);
+        String SerialNo, record;
+        try {
+
+        } catch(Exception e) {
+                e.printStackTrace();
+        }
+
+}
+public static void calculate(){
+        try {
+                FileReader file = new FileReader("expense.txt");
+                Scanner sc = new Scanner(file);
+                double sum = 0;
+                while(sc.hasNext())
+                {
+                        String line = sc.nextLine();
+                        String [] data = line.split(",");
+                        sum = sum + Double.parseDouble(data[3].trim());
+                }
+                sc.close();
+                System.out.println("Sum is "+sum);
+        } catch(Exception e) {
+                e.printStackTrace();
+        }
+}
+}
+
+
+
+
